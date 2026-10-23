@@ -1,86 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  useReducedMotion,
-  type MotionValue,
-} from "framer-motion";
-import { ArrowRight, ChevronsDown } from "lucide-react";
-
-type Photo = {
-  src: string;
-  left: number;
-  top: number;
-  w: number;
-  depth: number;
-  delay: number;
-  hideOnMobile?: boolean;
-};
-
-const photos: Photo[] = [
-  { src: "/events/hero/1.jpeg", left: 2, top: 18, w: 17, depth: 20, delay: 0 },
-  { src: "/events/hero/2.jpeg", left: 20, top: 48, w: 13, depth: 28, delay: 0.6, hideOnMobile: true },
-  { src: "/events/hero/3.jpeg", left: 5, top: 73, w: 14, depth: 24, delay: 1.2 },
-  { src: "/events/hero/4.jpeg", left: 79, top: 16, w: 18, depth: 18, delay: 0.3 },
-  { src: "/events/hero/5.jpeg", left: 73, top: 68, w: 16, depth: 25, delay: 0.9 },
-  { src: "/events/hero/6.jpeg", left: 38, top: 83, w: 12, depth: 30, delay: 1.5, hideOnMobile: true },
-  { src: "/events/hero/7.jpeg", left: 56, top: 85, w: 11, depth: 20, delay: 0.4, hideOnMobile: true },
-  { src: "/events/hero/8.jpeg", left: 89, top: 47, w: 9, depth: 32, delay: 1.1, hideOnMobile: true },
-];
-
-function Tile({
-  photo,
-  mx,
-  my,
-  reduceMotion,
-}: {
-  photo: Photo;
-  mx: MotionValue<number>;
-  my: MotionValue<number>;
-  reduceMotion: boolean;
-}) {
-  const x = useTransform(mx, (v) => v * photo.depth);
-  const y = useTransform(my, (v) => v * photo.depth);
-
-  return (
-    <motion.div
-      style={{
-        left: `${photo.left}%`,
-        top: `${photo.top}%`,
-        width: `min(${photo.w}vw, 300px)`,
-        x: reduceMotion ? 0 : x,
-        y: reduceMotion ? 0 : y,
-      }}
-      className={`absolute ${
-        photo.hideOnMobile ? "max-md:hidden" : "max-md:opacity-35"
-      }`}
-    >
-      <motion.div
-        animate={reduceMotion ? undefined : { y: [0, -10, 0] }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: photo.delay,
-        }}
-        className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/40"
-      >
-        <Image
-          src={photo.src}
-          alt=""
-          fill
-          sizes="(max-width: 768px) 35vw, 20vw"
-          className="object-cover"
-        />
-      </motion.div>
-    </motion.div>
-  );
-}
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRight, Compass, X } from "lucide-react";
+import PhotoLoop from "./photoloop";
 
 function LoopMark({ reduceMotion }: { reduceMotion: boolean }) {
   const ringMask =
@@ -282,41 +207,48 @@ function LoopTitle({ reduceMotion }: { reduceMotion: boolean }) {
 }
 
 export default function Hero() {
-  const rawX = useMotionValue(0);
-  const rawY = useMotionValue(0);
-  const mx = useSpring(rawX, { stiffness: 50, damping: 20 });
-  const my = useSpring(rawY, { stiffness: 50, damping: 20 });
   const reduceMotion = useReducedMotion() ?? false;
+  const [exploring, setExploring] = useState(false);
 
-  const onMove = (e: React.MouseEvent<HTMLElement>) => {
-    if (reduceMotion) return;
-    rawX.set(e.clientX / window.innerWidth - 0.5);
-    rawY.set(e.clientY / window.innerHeight - 0.5);
-  };
+  // lock page scroll while exploring
+  useEffect(() => {
+    if (!exploring) return;
+    window.scrollTo({ top: 0 });
+    const prev = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.documentElement.style.overflow = prev;
+    };
+  }, [exploring]);
 
   return (
-    <section
-      onMouseMove={onMove}
-      className="relative flex min-h-screen items-center justify-center overflow-hidden"
-    >
-      {/* Floating photos */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        {photos.map((photo) => (
-          <Tile
-            key={photo.src}
-            photo={photo}
-            mx={mx}
-            my={my}
-            reduceMotion={reduceMotion}
-          />
-        ))}
-      </div>
+    <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
+      {/* Infinite photo wall */}
+      <PhotoLoop
+        reduceMotion={reduceMotion}
+        exploring={exploring}
+        onExit={() => setExploring(false)}
+      />
 
-      {/* Soft overlay for text readability (low strength so the background shows) */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,6,12,0.5)_0%,rgba(6,6,12,0.2)_35%,transparent_65%)]" />
+      {/* Soft overlay for text readability (fades out in explore mode) */}
+      <motion.div
+        animate={{ opacity: exploring ? 0 : 1 }}
+        transition={{ duration: 0.6 }}
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,6,12,0.5)_0%,rgba(6,6,12,0.2)_35%,transparent_65%)]"
+      />
 
-      {/* Main hero content */}
-      <div className="relative z-10 flex flex-col items-center px-5 text-center">
+      {/* Main hero content (blurs away in explore mode) */}
+      <motion.div
+        animate={
+          exploring
+            ? { opacity: 0, scale: 0.94, filter: "blur(12px)" }
+            : { opacity: 1, scale: 1, filter: "blur(0px)" }
+        }
+        transition={{ duration: 0.6, ease: "easeInOut" }}
+        inert={exploring}
+        style={{ pointerEvents: exploring ? "none" : "auto" }}
+        className="relative z-10 flex flex-col items-center px-5 text-center"
+      >
         <LoopMark reduceMotion={reduceMotion} />
 
         <motion.p
@@ -341,7 +273,6 @@ export default function Hero() {
           <span className="text-[#00D9F5]">build</span> the future together.
         </motion.p>
 
-        {/* CTA buttons */}
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -364,21 +295,23 @@ export default function Hero() {
             <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </motion.div>
-      </div>
+      </motion.div>
 
-      {/* Explore button */}
+      {/* Explore / Back button */}
       <motion.button
         type="button"
-        onClick={() =>
-          window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
-        }
+        onClick={() => setExploring((v) => !v)}
         initial={reduceMotion ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.7 }}
-        className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-[#13131B]/80 px-6 py-3 font-mono text-xs uppercase tracking-widest text-loop-text backdrop-blur-xl transition-colors hover:border-[#268BFF]/50 hover:text-[#00D9F5] sm:bottom-8"
+        className={`absolute bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border px-6 py-3 font-mono text-xs uppercase tracking-widest backdrop-blur-xl transition-colors sm:bottom-8 ${
+          exploring
+            ? "border-[#00D9F5]/60 bg-[#0D0D14]/80 text-[#00D9F5] shadow-[0_0_24px_rgba(0,217,245,0.25)]"
+            : "border-white/10 bg-[#13131B]/80 text-loop-text hover:border-[#268BFF]/50 hover:text-[#00D9F5]"
+        }`}
       >
-        <ChevronsDown size={14} />
-        Explore
+        {exploring ? <X size={14} /> : <Compass size={14} />}
+        {exploring ? "Back" : "Explore"}
       </motion.button>
     </section>
   );
