@@ -82,6 +82,205 @@ function Tile({
   );
 }
 
+function LoopMark({ reduceMotion }: { reduceMotion: boolean }) {
+  const ringMask =
+    "radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px))";
+
+  return (
+    <motion.div
+      initial={reduceMotion ? false : { opacity: 0, scale: 0.85 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="relative mb-10 flex h-44 w-44 items-center justify-center sm:h-52 sm:w-52"
+    >
+      {/* pulsing glow behind everything */}
+      <motion.div
+        className="absolute -inset-12 rounded-full bg-[radial-gradient(circle,rgba(38,139,255,0.38)_0%,rgba(0,217,245,0.12)_40%,transparent_70%)] blur-xl"
+        animate={
+          reduceMotion
+            ? undefined
+            : { scale: [1, 1.12, 1], opacity: [0.7, 1, 0.7] }
+        }
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* outer dashed ring (slow, reverse) */}
+      <motion.div
+        className="absolute -inset-7 rounded-full border border-dashed border-white/20"
+        animate={reduceMotion ? undefined : { rotate: -360 }}
+        transition={{ duration: 70, repeat: Infinity, ease: "linear" }}
+      />
+
+      {/* orbiting dot on the outer ring */}
+      <motion.div
+        className="absolute -inset-7"
+        animate={reduceMotion ? undefined : { rotate: -360 }}
+        transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+      >
+        <span className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_12px_3px_rgba(255,255,255,0.6)]" />
+      </motion.div>
+
+      {/* faint static ring */}
+      <div className="absolute inset-0 rounded-full border border-[#268BFF]/25" />
+
+      {/* spinning light sweep */}
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{
+          background:
+            "conic-gradient(from 0deg, transparent 0deg, transparent 90deg, #268BFF 230deg, #00D9F5 335deg, transparent 360deg)",
+          WebkitMask: ringMask,
+          mask: ringMask,
+        }}
+        animate={reduceMotion ? undefined : { rotate: 360 }}
+        transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+      />
+
+      {/* glowing dot riding the sweep */}
+      <motion.div
+        className="absolute inset-0"
+        animate={reduceMotion ? undefined : { rotate: 360 }}
+        transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+      >
+        <span className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00D9F5] shadow-[0_0_16px_5px_rgba(0,217,245,0.75)]" />
+      </motion.div>
+
+      {/* inner ring (reverse) */}
+      <motion.div
+        className="absolute inset-6 rounded-full border border-[#00D9F5]/30"
+        style={{ borderTopColor: "transparent", borderBottomColor: "transparent" }}
+        animate={reduceMotion ? undefined : { rotate: -360 }}
+        transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+      />
+
+      {/* logo, gently floating */}
+      <motion.div
+        animate={reduceMotion ? undefined : { y: [0, -5, 0] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <Image
+          src="/logo/logotsp.png"
+          alt="LooP logo"
+          width={128}
+          height={128}
+          priority
+          className="h-24 w-24 object-contain drop-shadow-[0_0_18px_rgba(0,217,245,0.45)] sm:h-28 sm:w-28"
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function LoopTitle({ reduceMotion }: { reduceMotion: boolean }) {
+  const letters = ["L", "O", "O", "P"];
+
+  const shine =
+    "linear-gradient(100deg, #ffffff 0%, #ffffff 38%, #7fd8ff 50%, #ffffff 62%, #ffffff 100%)";
+
+  return (
+    <div className="relative">
+      {/* glow behind the text */}
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 scale-110 bg-[radial-gradient(ellipse_at_center,rgba(38,139,255,0.32)_0%,transparent_65%)] blur-2xl"
+      />
+
+      <h1
+        aria-label="LOOP"
+        className="flex items-center justify-center font-heading text-7xl font-bold leading-none tracking-tight sm:text-8xl lg:text-[9.5rem]"
+      >
+        {/* left bracket */}
+        <motion.span
+          aria-hidden
+          initial={reduceMotion ? false : { opacity: 0, x: 40 }}
+          animate={
+            reduceMotion
+              ? { opacity: 1 }
+              : { opacity: 1, x: [0, -8, 0] }
+          }
+          transition={{
+            opacity: { duration: 0.6, delay: 0.1 },
+            x: { duration: 3.5, repeat: Infinity, ease: "easeInOut" },
+          }}
+          className="mr-2 bg-gradient-to-br from-[#268BFF] to-[#00D9F5] bg-clip-text text-transparent [filter:drop-shadow(0_0_22px_rgba(38,139,255,0.7))]"
+        >
+          &lt;
+        </motion.span>
+
+        {/* letters */}
+        {letters.map((ch, i) => (
+          <motion.span
+            key={i}
+            aria-hidden
+            initial={
+              reduceMotion
+                ? false
+                : { opacity: 0, y: 60, filter: "blur(14px)" }
+            }
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{
+              type: "spring",
+              stiffness: 120,
+              damping: 14,
+              delay: 0.15 + i * 0.09,
+            }}
+            className="inline-block"
+          >
+            <motion.span
+              className="inline-block bg-clip-text text-transparent [filter:drop-shadow(0_4px_28px_rgba(120,190,255,0.35))]"
+              style={{
+                backgroundImage: shine,
+                backgroundSize: "300% 100%",
+                backgroundPosition: "130% 0",
+              }}
+              animate={
+                reduceMotion
+                  ? undefined
+                  : { backgroundPosition: ["130% 0", "-30% 0"] }
+              }
+              transition={{
+                duration: 1.6,
+                delay: 1.2 + i * 0.12,
+                repeat: Infinity,
+                repeatDelay: 4,
+                ease: "easeInOut",
+              }}
+            >
+              {ch}
+            </motion.span>
+          </motion.span>
+        ))}
+
+        {/* right bracket */}
+        <motion.span
+          aria-hidden
+          initial={reduceMotion ? false : { opacity: 0, x: -40 }}
+          animate={
+            reduceMotion
+              ? { opacity: 1 }
+              : { opacity: 1, x: [0, 8, 0] }
+          }
+          transition={{
+            opacity: { duration: 0.6, delay: 0.1 },
+            x: { duration: 3.5, repeat: Infinity, ease: "easeInOut" },
+          }}
+          className="ml-2 bg-gradient-to-bl from-[#00D9F5] to-[#268BFF] bg-clip-text text-transparent [filter:drop-shadow(0_0_22px_rgba(0,217,245,0.7))]"
+        >
+          &gt;
+        </motion.span>
+      </h1>
+
+      {/* glowing underline that draws in */}
+      <motion.div
+        initial={reduceMotion ? false : { scaleX: 0, opacity: 0 }}
+        animate={{ scaleX: 1, opacity: 1 }}
+        transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
+        className="mx-auto mt-4 h-px w-3/4 bg-gradient-to-r from-transparent via-[#268BFF] to-transparent shadow-[0_0_14px_2px_rgba(38,139,255,0.6)]"
+      />
+    </div>
+  );
+}
+
 export default function Hero() {
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
@@ -118,34 +317,7 @@ export default function Hero() {
 
       {/* Main hero content */}
       <div className="relative z-10 flex flex-col items-center px-5 text-center">
-        {/* Logo */}
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="relative mb-7 flex h-36 w-36 items-center justify-center sm:mb-8 sm:h-40 sm:w-40"
-        >
-          <motion.span
-            className="absolute inset-0 rounded-full border border-[#268BFF]/35"
-            animate={reduceMotion ? undefined : { rotate: 360 }}
-            transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
-            style={{ borderTopColor: "transparent" }}
-          />
-          <motion.span
-            className="absolute -inset-4 rounded-full border border-white/[0.10]"
-            animate={reduceMotion ? undefined : { rotate: -360 }}
-            transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
-            style={{ borderBottomColor: "transparent" }}
-          />
-          <Image
-            src="/logo/logotsp.png"
-            alt="LooP logo"
-            width={112}
-            height={112}
-            priority
-            className="h-24 w-24 object-contain sm:h-28 sm:w-28"
-          />
-        </motion.div>
+        <LoopMark reduceMotion={reduceMotion} />
 
         <motion.p
           initial={reduceMotion ? false : { opacity: 0, y: 10 }}
@@ -156,20 +328,7 @@ export default function Hero() {
           Build — Share — Repeat
         </motion.p>
 
-        <motion.h1
-          initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 0.15, ease: "easeOut" }}
-          className="font-heading text-7xl font-bold tracking-tight sm:text-8xl lg:text-9xl"
-        >
-          <span className="bg-gradient-to-r from-[#268BFF] to-[#00D9F5] bg-clip-text text-transparent">
-            &lt;
-          </span>
-          LOOP
-          <span className="bg-gradient-to-r from-[#00D9F5] to-[#268BFF] bg-clip-text text-transparent">
-            &gt;
-          </span>
-        </motion.h1>
+        <LoopTitle reduceMotion={reduceMotion} />
 
         <motion.p
           initial={reduceMotion ? false : { opacity: 0, y: 12 }}
