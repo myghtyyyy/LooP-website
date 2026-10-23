@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Pagetransition from "@/components/Pagetransition/Pagetransition";
 import "./globals.css";
 import Footer from "@/components/layout/Footer";
-
+import Background from "@/components/layout/background";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -37,6 +37,7 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrains.variable}`}
     >
       <body className="bg-loop-bg font-body text-loop-text antialiased">
+        <Background />
         <Navbar />
         <Pagetransition>{children}</Pagetransition>
         <Footer />

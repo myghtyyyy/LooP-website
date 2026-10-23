@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -6,8 +7,8 @@ import {
   useMotionValue,
   useSpring,
   useTransform,
-  type MotionValue,
   useReducedMotion,
+  type MotionValue,
 } from "framer-motion";
 import { ArrowRight, ChevronsDown } from "lucide-react";
 
@@ -60,11 +61,7 @@ function Tile({
       }`}
     >
       <motion.div
-        animate={
-          reduceMotion
-            ? undefined
-            : { y: [0, -10, 0] }
-        }
+        animate={reduceMotion ? undefined : { y: [0, -10, 0] }}
         transition={{
           duration: 6,
           repeat: Infinity,
@@ -88,15 +85,12 @@ function Tile({
 export default function Hero() {
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
-
   const mx = useSpring(rawX, { stiffness: 50, damping: 20 });
   const my = useSpring(rawY, { stiffness: 50, damping: 20 });
-
   const reduceMotion = useReducedMotion() ?? false;
 
   const onMove = (e: React.MouseEvent<HTMLElement>) => {
     if (reduceMotion) return;
-
     rawX.set(e.clientX / window.innerWidth - 0.5);
     rawY.set(e.clientY / window.innerHeight - 0.5);
   };
@@ -104,21 +98,7 @@ export default function Hero() {
   return (
     <section
       onMouseMove={onMove}
-      className="relative isolate flex min-h-[760px] min-h-screen items-center justify-center overflow-hidden bg-[#08080B] px-5 pb-20 pt-28"
-      style={{
-        backgroundImage: `
-          radial-gradient(
-            ellipse at 50% 42%,
-            rgba(38, 139, 255, 0.10) 0%,
-            transparent 55%
-          ),
-          radial-gradient(
-            rgba(255,255,255,0.055) 1px,
-            transparent 1px
-          )
-        `,
-        backgroundSize: "100% 100%, 28px 28px",
-      }}
+      className="relative flex min-h-screen items-center justify-center overflow-hidden"
     >
       {/* Floating photos */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -133,11 +113,11 @@ export default function Hero() {
         ))}
       </div>
 
-      {/* Dark overlay for text readability */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(8,8,11,0.94)_0%,rgba(8,8,11,0.68)_32%,transparent_68%)]" />
+      {/* Soft overlay for text readability (low strength so the background shows) */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,6,12,0.5)_0%,rgba(6,6,12,0.2)_35%,transparent_65%)]" />
 
       {/* Main hero content */}
-      <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center text-center">
+      <div className="relative z-10 flex flex-col items-center px-5 text-center">
         {/* Logo */}
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, scale: 0.9 }}
@@ -145,29 +125,18 @@ export default function Hero() {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="relative mb-7 flex h-36 w-36 items-center justify-center sm:mb-8 sm:h-40 sm:w-40"
         >
-
           <motion.span
             className="absolute inset-0 rounded-full border border-[#268BFF]/35"
             animate={reduceMotion ? undefined : { rotate: 360 }}
-            transition={{
-              duration: 24,
-              repeat: Infinity,
-              ease: "linear",
-            }}
+            transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
             style={{ borderTopColor: "transparent" }}
           />
-
           <motion.span
             className="absolute -inset-4 rounded-full border border-white/[0.10]"
             animate={reduceMotion ? undefined : { rotate: -360 }}
-            transition={{
-              duration: 32,
-              repeat: Infinity,
-              ease: "linear",
-            }}
+            transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
             style={{ borderBottomColor: "transparent" }}
           />
-
           <Image
             src="/logo/logotsp.png"
             alt="LooP logo"
@@ -208,10 +177,9 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.25 }}
           className="mt-5 max-w-xl font-mono text-sm leading-7 text-loop-muted sm:text-base"
         >
-          Where builders{" "}
-          <span className="text-[#00D9F5]">connect</span>, <span className="text-[#00D9F5]">learn</span>, and{" "}
-          <span className="text-[#00D9F5]">build</span> the future
-          together.
+          Where builders <span className="text-[#00D9F5]">connect</span>,{" "}
+          <span className="text-[#00D9F5]">learn</span>, and{" "}
+          <span className="text-[#00D9F5]">build</span> the future together.
         </motion.p>
 
         {/* CTA buttons */}
@@ -226,21 +194,15 @@ export default function Hero() {
             className="group flex min-h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-[#268BFF] to-[#00BFEA] px-7 py-3.5 font-mono text-sm text-white shadow-lg shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-blue-500/25"
           >
             Events
-            <ArrowRight
-              size={16}
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            />
+            <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
 
           <Link
             href="/team"
-            className="group flex min-h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-[#268BFF] to-[#00BFEA] px-7 py-3.5 font-mono text-sm text-white shadow-lg shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-blue-500/25"
+            className="group flex min-h-12 items-center gap-2 rounded-xl border border-white/15 bg-[#0D0D14]/70 px-7 py-3.5 font-mono text-sm text-white backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-[#268BFF]/50"
           >
             Our Team
-            <ArrowRight
-              size={16}
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            />
+            <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </motion.div>
       </div>
@@ -249,10 +211,7 @@ export default function Hero() {
       <motion.button
         type="button"
         onClick={() =>
-          window.scrollTo({
-            top: window.innerHeight,
-            behavior: "smooth",
-          })
+          window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
         }
         initial={reduceMotion ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
