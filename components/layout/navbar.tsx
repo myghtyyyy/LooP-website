@@ -1,8 +1,10 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+
 import {
   AnimatePresence,
   motion,
@@ -12,14 +14,14 @@ import {
 import { ArrowRight, Menu, X } from "lucide-react";
 
 const links = [
-  { href: "/", label: "~/home" },
-  { href: "/events", label: "./events" },
-  { href: "/team", label: "./team" },
-  { href: "/projects", label: "./projects" },
+  { href: "/", label: "Home" },
+  { href: "/events", label: "Events" },
+  { href: "/team", label: "Team" },
+  { href: "/projects", label: "Projects" },
 ];
 
 const pill =
-  "rounded-full border border-white/10 bg-loop-card/70 backdrop-blur-md";
+  "rounded-full border border-white/[0.10] bg-[#0D0D14]/90 shadow-[0_8px_32px_rgba(0,0,0,0.25)] backdrop-blur-2xl";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -27,12 +29,16 @@ export default function Navbar() {
   const [hidden, setHidden] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
 
-  // hide on scroll down, show on scroll up
   const { scrollY } = useScroll();
+
   useMotionValueEvent(scrollY, "change", (y) => {
     const prev = scrollY.getPrevious() ?? 0;
-    if (y > prev && y > 120 && !open) setHidden(true);
-    else setHidden(false);
+
+    if (y > prev && y > 120 && !open) {
+      setHidden(true);
+    } else {
+      setHidden(false);
+    }
   });
 
   const isActive = (href: string) =>
@@ -42,121 +48,160 @@ export default function Navbar() {
 
   return (
     <motion.header
-      animate={{ y: hidden ? -120 : 0 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-      className="fixed inset-x-0 top-4 z-50"
-    >
-      <div className="mx-auto flex max-w-[1280px] items-center justify-between px-20 max-lg:px-10 max-md:px-5">
-        {/* Logo pill */}
-        {/* Logo pill */}
-<Link
-  href="/"
-  onClick={() => setOpen(false)}
-  aria-label="LooP home"
-  className={`${pill} flex h-12 w-12 items-center justify-center overflow-hidden`}
+  initial={{ y: -30, opacity: 0 }}
+  animate={{
+    y: hidden ? -120 : 0,
+    opacity: hidden ? 0 : 1,
+  }}
+  transition={{ duration: 0.35, ease: "easeOut" }}
+  className="fixed inset-x-0 top-6 z-50"
 >
-  <Image
-    src="/logo/logo.png"
-    alt="LooP"
-    width={100}
-    height={28}
-    priority
-    className="h-full w-full object contain p-1.5"
-  />
-</Link>
+      <div className="relativemx-auto flex w-full max-w-[1440px] items-center justify-between px-6 sm:px-10 lg:px-16">
+        {/* Logo */}
+        <Link
+          href="/"
+          onClick={() => setOpen(false)}
+          aria-label="LooP home"
+          className={`${pill} group flex h-12 w-12 items-center justify-center overflow-hidden transition-all duration-300 hover:border-cyan-400/40 hover:shadow-[0_0_24px_rgba(0,217,245,0.12)]`}
+        >
+          <Image
+            src="/logo/logotsp.png"
+            alt="LooP"
+            width={100}
+            height={100}
+            priority
+            className="h-full w-full object-contain p-1.5 transition-transform duration-300 group-hover:scale-110"
+          />
+        </Link>
 
-
-        {/* Links pill (desktop) */}
-        <ul
-          className={`${pill} flex items-center gap-1 p-1.5 max-md:hidden`}
+        {/* Desktop Navigation */}
+        <nav
+  aria-label="Main navigation"
+  className={`${pill} absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 p-1.5 md:flex`}
           onMouseLeave={() => setHovered(null)}
         >
           {links.map((link) => {
             const active = isActive(link.href);
+
             return (
-              <li key={link.href} className="relative">
-                <Link
-                  href={link.href}
-                  onMouseEnter={() => setHovered(link.href)}
-                  className={`relative block rounded-full px-5 py-2.5 font-mono text-sm transition-colors ${
-                    active ? "text-white" : "text-loop-muted hover:text-loop-text"
-                  }`}
-                >
-                  {/* hover highlight follows the mouse */}
-                  {hovered === link.href && !active && (
-                    <motion.span
-                      layoutId="nav-hover"
-                      className="absolute inset-0 rounded-full bg-white/10"
-                      transition={{ type: "spring", stiffness: 400, damping: 32 }}
-                    />
-                  )}
-                  {/* active highlight slides between pages */}
-                  {active && (
-                    <motion.span
-                      layoutId="nav-active"
-                      className="absolute inset-0 rounded-full bg-loop-accent"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                  <span className="relative z-10">{link.label}</span>
-                </Link>
-              </li>
+              <Link
+                key={link.href}
+                href={link.href}
+                onMouseEnter={() => setHovered(link.href)}
+                aria-current={active ? "page" : undefined}
+                className={`relative block rounded-full px-5 py-2.5 font-mono text-sm transition-colors duration-200 ${
+                  active
+                    ? "text-white"
+                    : "text-loop-muted hover:text-white"
+                }`}
+              >
+                {/* Hover background */}
+                {hovered === link.href && !active && (
+                  <motion.span
+                    layoutId="nav-hover"
+                    className="absolute inset-0 rounded-full bg-white/[0.06]"
+                    transition={{
+                      type: "spring",
+                      stiffness: 400,
+                      damping: 32,
+                    }}
+                  />
+                )}
+
+                {/* Active background */}
+                {active && (
+                  <motion.span
+                    layoutId="nav-active"
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-[#268BFF] to-[#00BFEA] shadow-[0_0_18px_rgba(38,139,255,0.20)]"
+                    transition={{
+                      type: "spring",
+                      stiffness: 380,
+                      damping: 32,
+                    }}
+                  />
+                )}
+
+                <span className="relative z-10">{link.label}</span>
+              </Link>
             );
           })}
-        </ul>
+        </nav>
 
-        {/* Contact pill (desktop) */}
+        {/* Contact Button */}
         <Link
           href="/contact"
-          className={`${pill} flex h-12 items-center gap-2 px-6 font-mono text-sm transition-colors max-md:hidden ${
+          className={`group hidden h-12 items-center gap-2 rounded-full border px-6 font-mono text-sm transition-all duration-300 md:flex ${
             contactActive
-              ? "border-loop-accent text-loop-text"
-              : "text-loop-accent hover:border-loop-accent"
+              ? "border-cyan-400/50 bg-cyan-400/10 text-cyan-300"
+              : "border-white/[0.10] bg-[#0D0D14]/90 text-cyan-300 hover:border-cyan-400/40 hover:bg-cyan-400/[0.06]"
           }`}
         >
-          ./contact <ArrowRight size={16} />
+          Contact
+          <ArrowRight
+            size={16}
+            className="transition-transform duration-300 group-hover:translate-x-1"
+          />
         </Link>
 
-        {/* Menu button (phones) */}
+        {/* Mobile Menu Button */}
         <button
           type="button"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen(!open)}
-          className={`${pill} hidden h-12 w-12 items-center justify-center max-md:flex`}
+          className={`${pill} flex h-12 w-12 items-center justify-center text-white transition-colors hover:border-cyan-400/30 md:hidden`}
         >
-          {open ? <X size={22} /> : <Menu size={22} />}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={open ? "close" : "menu"}
+              initial={{ opacity: 0, rotate: -45, scale: 0.8 }}
+              animate={{ opacity: 1, rotate: 0, scale: 1 }}
+              exit={{ opacity: 0, rotate: 45, scale: 0.8 }}
+              transition={{ duration: 0.15 }}
+              className="flex"
+            >
+              {open ? <X size={21} /> : <Menu size={21} />}
+            </motion.span>
+          </AnimatePresence>
         </button>
       </div>
 
-      {/* Mobile dropdown */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
+          <motion.nav
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
             transition={{ duration: 0.2 }}
-            className="mx-5 mt-3 hidden max-md:block"
+            aria-label="Mobile navigation"
+            className="mx-5 mt-3 md:hidden"
           >
-            <ul className="rounded-3xl border border-white/10 bg-loop-card/90 p-2 backdrop-blur-md">
-              {[...links, { href: "/contact", label: "./contact" }].map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className={`block rounded-2xl px-5 py-3.5 font-mono text-base ${
-                      isActive(link.href)
-                        ? "bg-loop-accent text-white"
-                        : "text-loop-muted"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
+            <div className="rounded-3xl border border-white/[0.09] bg-[#0D0D14]/95 p-2 shadow-2xl backdrop-blur-2xl">
+              {[...links, { href: "/contact", label: "Contact" }].map(
+                (link) => {
+                  const active = isActive(link.href);
+
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setOpen(false)}
+                      aria-current={active ? "page" : undefined}
+                      className={`mb-1 flex items-center justify-between rounded-2xl px-5 py-3.5 font-mono text-sm transition-colors last:mb-0 ${
+                        active
+                          ? "bg-gradient-to-r from-[#268BFF] to-[#00BFEA] text-white"
+                          : "text-loop-muted hover:bg-white/[0.05] hover:text-white"
+                      }`}
+                    >
+                      {link.label}
+                      {active && <span className="text-xs">●</span>}
+                    </Link>
+                  );
+                }
+              )}
+            </div>
+          </motion.nav>
         )}
       </AnimatePresence>
     </motion.header>
