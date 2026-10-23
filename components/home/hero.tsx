@@ -1,5 +1,4 @@
 "use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -146,6 +145,7 @@ export default function Hero() {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="relative mb-7 flex h-36 w-36 items-center justify-center sm:mb-8 sm:h-40 sm:w-40"
         >
+
           <motion.span
             className="absolute inset-0 rounded-full border border-[#268BFF]/35"
             animate={reduceMotion ? undefined : { rotate: 360 }}
@@ -209,8 +209,8 @@ export default function Hero() {
           className="mt-5 max-w-xl font-mono text-sm leading-7 text-loop-muted sm:text-base"
         >
           Where builders{" "}
-          <span className="text-[#00D9F5]">connect</span>, learn, and{" "}
-          <span className="font-bold text-loop-text">build</span> the future
+          <span className="text-[#00D9F5]">connect</span>, <span className="text-[#00D9F5]">learn</span>, and{" "}
+          <span className="text-[#00D9F5]">build</span> the future
           together.
         </motion.p>
 
@@ -234,7 +234,7 @@ export default function Hero() {
 
           <Link
             href="/team"
-            className="group flex min-h-12 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.035] px-7 py-3.5 font-mono text-sm text-white transition-all duration-300 hover:-translate-y-1 hover:border-[#268BFF]/50 hover:bg-[#268BFF]/[0.08]"
+            className="group flex min-h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-[#268BFF] to-[#00BFEA] px-7 py-3.5 font-mono text-sm text-white shadow-lg shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-blue-500/25"
           >
             Our Team
             <ArrowRight

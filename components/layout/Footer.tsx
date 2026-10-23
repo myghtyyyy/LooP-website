@@ -60,9 +60,12 @@ export default function Footer() {
           </ul>
         </div>
 
-        <p className="mt-12 font-mono text-xs text-loop-muted">
-          © 2026 LooP. All rights reserved.
-        </p>
+        <div className="mt-12 flex items-center justify-between font-mono text-xs text-loop-muted">
+  <p>© 2026 LooP. All rights reserved.</p>
+  <Link href="/login" className="transition-colors hover:text-loop-text">
+    Team login
+  </Link>
+</div>
       </div>
     </footer>
   );

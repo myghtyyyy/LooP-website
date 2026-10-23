@@ -5,6 +5,7 @@ import Pagetransition from "@/components/Pagetransition/Pagetransition";
 import "./globals.css";
 import Footer from "@/components/layout/Footer";
 
+
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-space-grotesk",
