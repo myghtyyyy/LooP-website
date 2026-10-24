@@ -1,3 +1,9 @@
+// ISO (UTC) -> value for <input type="datetime-local"> in India time
+export function toLocalInput(iso?: string | null) {
+  if (!iso) return "";
+  const d = new Date(new Date(iso).getTime() + 5.5 * 60 * 60 * 1000);
+  return d.toISOString().slice(0, 16);
+}
 export type EventStatus = "upcoming" | "ongoing" | "completed";
 
 export function getStatus(startsAt: string, endsAt?: string | null): EventStatus {

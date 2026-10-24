@@ -13,6 +13,7 @@ const socials = [
 
 const nav = [
   { href: "/", label: "Home" },
+  { href: "/about", label: "About us" },
   { href: "/events", label: "Events" },
   { href: "/team", label: "Team" },
   { href: "/projects", label: "Projects" },

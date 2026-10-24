@@ -36,6 +36,9 @@ export default async function AdminEvents() {
               </p>
             </div>
             <div className="flex gap-5">
+              <Link href={`/admin/events/${e.id}/edit`} className="font-mono text-xs text-[#00D9F5] hover:underline">
+              edit
+              </Link>
               <Link href={`/events/${e.slug}`} className="font-mono text-xs text-loop-muted hover:text-loop-text">
                 view
               </Link>
