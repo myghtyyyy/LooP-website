@@ -5,7 +5,7 @@ import { requireStaff } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
-export type Result = { ok: boolean; message: string };
+export type Result = { ok: boolean; message: string; password?: string };
 
 const ROLES = ["pending", "member", "admin"];
 
@@ -51,9 +51,10 @@ export async function createMember(formData: FormData): Promise<Result> {
 
   revalidatePath("/admin/team");
   return {
-    ok: true,
-    message: `Created ${email}. Temporary password (shown once): ${password}`,
-  };
+  ok: true,
+  message: `Created ${email}. Send this password to them. It is shown only once.`,
+  password,
+};
 }
 
 export async function resetPassword(formData: FormData): Promise<Result> {
