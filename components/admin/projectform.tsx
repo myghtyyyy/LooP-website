@@ -21,7 +21,8 @@ export type ProjectRow = {
   cover_url: string | null;
   tags: string[];
   builders: string[];
-  featured: boolean;
+    featured: boolean;
+  community: boolean;
   published: boolean;
 };
 
@@ -77,6 +78,7 @@ export default function ProjectForm({
         builders: list(f.get("builders")),
         published: f.get("published") === "on",
         ...(isAdmin ? { featured: f.get("featured") === "on" } : {}),
+        community: f.get("community") === "on",
       };
 
       if (project) {
@@ -127,7 +129,7 @@ export default function ProjectForm({
       />
       <label className={label}>
         Built by (names, separated by commas)
-        <input name="builders" defaultValue={project?.builders.join(", ")} placeholder="Aarav Shah, Meera Iyer" className={input} />
+        <input name="builders" defaultValue={project?.builders.join(", ")} placeholder="rishi, Aditi" className={input} />
       </label>
       <label className={label}>
         GitHub repo link
@@ -153,7 +155,10 @@ export default function ProjectForm({
           <input type="file" name="cover" accept="image/*" className={input} />
         </label>
       </div>
-
+              <label className="flex items-center gap-2 text-sm">
+        <input type="checkbox" name="community" defaultChecked={project?.community ?? false} />
+        Community project (built by the LooP community)
+      </label>
       <label className="flex items-center gap-2 text-sm">
         <input type="checkbox" name="published" defaultChecked={project?.published ?? true} />
         Show on the public site

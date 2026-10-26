@@ -62,8 +62,13 @@ function Card({ p, onOpen, big }: { p: ProjectRow; onOpen: () => void; big?: boo
         <span className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#28C840]" />
         <span className="ml-2 truncate font-mono text-[11px] text-loop-muted">~/projects/{p.slug.replace(/-[a-z0-9]{4}$/, "")}</span>
+        {p.community && (
+          <span className="ml-auto rounded-full border border-white/20 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-loop-muted">
+            community
+          </span>
+        )}
         {p.featured && (
-          <span className="ml-auto flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-[#00D9F5]">
+          <span className={`${p.community ? "ml-2" : "ml-auto"} flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-[#00D9F5]`}>
             <Star size={11} fill="currentColor" /> featured
           </span>
         )}
@@ -144,6 +149,11 @@ function Detail({ p, onClose }: { p: ProjectRow; onClose: () => void }) {
           {p.builders.length > 0 && (
             <div>
               <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-loop-muted">built by</p>
+              {p.community && (
+                <p className="mt-1 text-sm text-loop-muted">
+                  A community project, built with LooP by students outside the core team.
+                </p>
+              )}
               <div className="mt-3 flex flex-wrap gap-2">
                 {p.builders.map((n) => (
                   <span key={n} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1 pl-1 pr-4 text-sm">
@@ -183,16 +193,28 @@ function Detail({ p, onClose }: { p: ProjectRow; onClose: () => void }) {
   );
 }
 
-export default function ProjectsBoard({ projects }: { projects: ProjectRow[] }) {
+export default function ProjectsBoard({
+  projects = [],
+}: {
+  projects?: ProjectRow[];
+}) {
   const [tag, setTag] = useState("All");
   const [openId, setOpenId] = useState<string | null>(null);
   const open = projects.find((p) => p.id === openId) ?? null;
 
   const tags = useMemo(
-    () => ["All", ...new Set(projects.flatMap((p) => p.tags))],
+    () => [
+      "All",
+      ...(projects.some((p) => p.community) ? ["Community"] : []),
+      ...new Set(projects.flatMap((p) => p.tags)),
+    ],
     [projects]
   );
-  const shown = projects.filter((p) => tag === "All" || p.tags.includes(tag));
+  const shown = projects.filter(
+    (p) =>
+      tag === "All" ||
+      (tag === "Community" ? p.community : p.tags.includes(tag))
+  );
   const hero = tag === "All" ? shown.find((p) => p.featured) : undefined;
   const rest = shown.filter((p) => p.id !== hero?.id);
 
