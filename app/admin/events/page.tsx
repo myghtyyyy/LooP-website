@@ -2,8 +2,9 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getStatus, statusLabel } from "@/lib/events";
 import DeleteEventButton from "@/components/admin/DeleteEventButton";
-
+import { connection } from "next/server";
 export default async function AdminEvents() {
+  await connection();
   const supabase = await createClient();
   const { data: events } = await supabase
     .from("events")

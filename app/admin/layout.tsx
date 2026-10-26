@@ -11,6 +11,7 @@ async function Guard({ children }: { children: React.ReactNode }) {
         <nav className="flex flex-wrap gap-6 font-mono text-sm">
           <Link href="/admin" className="text-loop-text hover:text-[#00D9F5]">dashboard</Link>
           <Link href="/admin/events" className="text-loop-muted hover:text-loop-text">events</Link>
+          <Link href="/admin/projects" className="text-loop-muted hover:text-loop-text">projects</Link>
           <Link href="/admin/profile" className="text-loop-muted hover:text-loop-text">my profile</Link>
           {profile.role === "admin" && (
             <Link href="/admin/team" className="text-loop-muted hover:text-loop-text">team</Link>

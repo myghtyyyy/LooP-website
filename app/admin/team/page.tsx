@@ -3,8 +3,9 @@ import { requireStaff } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import InviteForm from "@/components/admin/inviteform";
 import MemberRow, { type Member } from "@/components/admin/memberrow";
-
+import { connection } from "next/server";
 async function Team() {
+  await connection();
   await requireStaff(true); // members who type this URL get sent back to /admin
   const supabase = await createClient();
   const { data } = await supabase
