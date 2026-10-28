@@ -10,7 +10,7 @@ import {
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-
+import { createPortal } from "react-dom";
 // Add more photos here. Files go in public/events/hero/
 const IMAGES = Array.from(
   { length: 34 },
@@ -126,7 +126,8 @@ export default function PhotoLoop({
   const lightRef = useRef<string | null>(null);
 
   const [light, setLight] = useState<string | null>(null);
-
+const [mounted, setMounted] = useState(false);
+useEffect(() => setMounted(true), []);
   const [pressed, setPressed] = useState<Record<Key, boolean>>({
     w: false,
     a: false,
@@ -836,50 +837,49 @@ export default function PhotoLoop({
         )}
       </AnimatePresence>
 
-      {/* Lightbox */}
-      <AnimatePresence>
-        {light !== null && (
-          <motion.div
-            key="lightbox"
-            data-lightbox
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setLight(null)}
-            className="fixed inset-0 z-[80] flex items-center justify-center bg-[#06060C]/85 p-5 backdrop-blur-md"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{
-                type: "spring",
-                stiffness: 260,
-                damping: 26,
-              }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative aspect-[4/3] w-full max-w-4xl overflow-hidden rounded-3xl border border-[#00D9F5]/30 shadow-[0_0_80px_rgba(38,139,255,0.35)]"
-            >
-              <Image
-                src={light}
-                alt="Selected event photo"
-                fill
-                sizes="(max-width: 768px) 100vw, 900px"
-                className="object-cover"
-              />
-
-              <button
-                type="button"
+            {/* lightbox (rendered into <body> so no parent can clip it) */}
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {light && (
+              <motion.div
+                key="lightbox"
+                data-lightbox
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 onClick={() => setLight(null)}
-                aria-label="Close photo"
-                className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-[#06060C]/70 text-white backdrop-blur-md hover:border-[#00D9F5]"
+                className="fixed inset-0 z-[100] flex items-center justify-center bg-[#06060C]/85 p-5 backdrop-blur-md"
               >
-                <X size={18} />
-              </button>
-            </motion.div>
-          </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 260, damping: 26 }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative aspect-[4/3] w-full max-w-4xl overflow-hidden rounded-3xl border border-[#00D9F5]/30 shadow-[0_0_80px_rgba(38,139,255,0.35)]"
+                >
+                  <Image
+                    src={light}
+                    alt=""
+                    fill
+                    sizes="900px"
+                    className="object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setLight(null)}
+                    aria-label="Close photo"
+                    className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-[#06060C]/70 text-white backdrop-blur-md hover:border-[#00D9F5]"
+                  >
+                    <X size={18} />
+                  </button>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
     </>
   );
 }
