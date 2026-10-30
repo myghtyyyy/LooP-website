@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
@@ -37,11 +38,15 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrains.variable}`}
     >
       <body className="bg-loop-bg font-body text-loop-text antialiased">
-        <Background />
-        <Navbar />
-        <Pagetransition>{children}</Pagetransition>
-        <Footer />
-      </body>
+  <Background />
+  <Suspense fallback={null}>
+    <Navbar />
+  </Suspense>
+  <Suspense fallback={null}>
+    <Pagetransition>{children}</Pagetransition>
+  </Suspense>
+  <Footer />
+</body>
     </html>
   );
 }
