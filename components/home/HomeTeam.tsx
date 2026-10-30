@@ -9,6 +9,7 @@ export default async function HomeTeam() {
   await connection();
   const supabase = await createClient();
   const { data } = await supabase
+  
     .from("team_members")
     .select("id, full_name, position, avatar_url, display_order, term_year")
     .order("display_order");
@@ -17,9 +18,9 @@ export default async function HomeTeam() {
 
   const year = Math.max(...data.map((m) => m.term_year));
   const faces = data
-    .filter((m) => m.term_year === year && tierOf(m.position) <= 1)
+    .filter((m) => m.term_year === year && tierOf(m.position) <= 2)
     .sort((a, b) => tierOf(a.position) - tierOf(b.position) || a.display_order - b.display_order)
-    .slice(0, 4);
+    .slice(0, 5);
 
   if (!faces.length) return null;
 
