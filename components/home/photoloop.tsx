@@ -836,7 +836,6 @@ useEffect(() => setMounted(true), []);
           </motion.div>
         )}
       </AnimatePresence>
-
             {/* lightbox (rendered into <body> so no parent can clip it) */}
       {mounted &&
         createPortal(
