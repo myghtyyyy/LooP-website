@@ -1,7 +1,8 @@
 export const TIERS = [
   { label: "Faculty", sub: "guiding the club", size: "xl" as const },
-  { label: "Leadership", sub: "president · vice president · secretary", size: "lg" as const },
-  { label: "Core team", sub: "treasurer · head executive", size: "md" as const },
+  { label: "Presidents", sub: "president · vice president", size: "lg" as const },
+  { label: "Leadership", sub: "treasurer · secretary", size: "lg" as const },
+  { label: "Head executive", sub: "leading the executives", size: "md" as const },
   { label: "Executives", sub: "the ones making it happen", size: "sm" as const },
 ];
 
