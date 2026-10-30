@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import Hero from "@/components/home/Hero";
-import HomeEvents from "@/components/home/homeevent";
-import HomeProjects from "@/components/home/homeproject";
-import HomeTeam from "@/components/home/hometeam";
+import HomeEvents from "@/components/home/HomeEvents";
+import HomeProjects from "@/components/home/HomeProjects";
+import HomeTeam from "@/components/home/HomeTeam";
 
 export default function Home() {
   return (
